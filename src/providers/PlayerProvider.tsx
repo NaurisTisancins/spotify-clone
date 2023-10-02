@@ -17,7 +17,7 @@ type PlayerProviderType = {
 
 export default function PlayerProvider({ children }: PlayerProviderType) {
   const [track, setTrack] = useState<Track>();
-  console.log('track', track);
+
   return (
     <PlayerContext.Provider value={{ track, setTrack }}>
       {children}

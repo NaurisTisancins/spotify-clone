@@ -1,11 +1,58 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePlayerContext } from '../providers/PlayerProvider';
+import { AVPlaybackStatus, Audio } from 'expo-av';
+import { Sound } from 'expo-av/build/Audio';
 
 const Player = () => {
+  const [sound, setSound] = useState<Sound>();
+  const [isPlaying, setIsPlaying] = useState(false);
   const { track } = usePlayerContext();
+
+  useEffect(() => {
+    playTrack();
+
+    return sound
+      ? () => {
+          console.log('Unloading song');
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [track]);
+
+  const playTrack = async () => {
+    if (sound) await sound.unloadAsync();
+    if (!track?.preview_url) return;
+
+    const { sound: newSound } = await Audio.Sound.createAsync({
+      uri: track.preview_url,
+    });
+
+    setSound(newSound);
+    newSound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+    await newSound.playAsync();
+  };
+
+  const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
+    console.log(status);
+    if (!status.isLoaded) {
+      return;
+    }
+
+    setIsPlaying(status.isPlaying);
+  };
+
+  const onPlayPause = async () => {
+    if (!sound) return;
+    if (isPlaying) {
+      await sound.pauseAsync();
+    } else {
+      await sound.playAsync();
+    }
+  };
+
   if (!track) {
     return null;
   }
@@ -29,8 +76,9 @@ const Player = () => {
           style={{ marginHorizontal: 10 }}
         />
         <Ionicons
+          onPress={onPlayPause}
           disabled={!track?.preview_url}
-          name={'play'}
+          name={isPlaying ? 'pause' : 'play'}
           size={22}
           color={track?.preview_url ? 'white' : 'gray'}
         />
