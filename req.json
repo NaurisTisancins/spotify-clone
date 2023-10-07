@@ -1,0 +1,16 @@
+curl -X POST "https://accounts.spotify.com/api/token" \
+     -H "Content-Type: application/x-www-form-urlencoded" \
+     -d "grant_type=client_credentials&client_id=e99c2f00ab7640b8a0aa772ab1ef65f7&client_secret=0dbd0be1bff8476f8c9506769d27c23f"
+
+{"access_token":"BQD1-jzPc0y1LvWSezNFefa5bHnvJm5dpO16awRrZxQeKtHUWIl1bizFk2vFdvG6JVIqLqVlV2LB0HSfFAP3WEJwG-gSzC0GMXzLbWlJz8XyhvVmj5w","token_type":"Bearer","expires_in":3600
+
+curl "https://api.spotify.com/v1/artists/4Z8W4fKeB5YxbusRsdQVPb" \
+     -H "Authorization: Bearer BQD1-jzPc0y1LvWSezNFefa5bHnvJm5dpO16awRrZxQeKtHUWIl1bizFk2vFdvG6JVIqLqVlV2LB0HSfFAP3WEJwG-gSzC0GMXzLbWlJz8XyhvVmj5w"
+
+stepzen import \
+        curl -X POST "https://accounts.spotify.com/api/token" \
+        --header "Content-Type: application/x-www-form-urlencoded" \
+        --data "grant_type=client_credentials&client_id=e99c2f00ab7640b8a0aa772ab1ef65f7&client_secret=0dbd0be1bff8476f8c9506769d27c23f" \
+        --query-name "getToken" \
+        --query-type "TokenResponse" \
+        --name "auth"
